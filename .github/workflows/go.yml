@@ -13,13 +13,26 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
+# Strategy tell Github Actions : I want to control how this job is executed
+# One thing we can put inside a strategy is a matrix.
+# and the matrix mean: I want this job to run multiple times using different values.
+# and we create a matrix variable called go-version that has 3 value '1.21.x', '1.22.x', '1.23.x'
+
+    strategy:
+      matrix:
+        go-version: [ '1.21.x', '1.22.x', '1.23.x']
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up Go ${{ matrix.go-version}}
+      uses: actions/setup-go@v5
       with:
-        go-version: '1.20'
+        go-version: ${{ matrix.go-version}}
+        
+    - name: Display Go version
+      run: go version
+    
 
     - name: Build
       run: go build -v ./...
